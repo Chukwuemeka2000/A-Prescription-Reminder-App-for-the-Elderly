@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "108022863311",
+    "project_id": "reminder-c6d77",
+    "storage_bucket": "reminder-c6d77.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108022863311:android:6ce37d1802d74a0eb1aeba",
+        "android_client_info": {
+          "package_name": "me.codeenzyme.reminder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "108022863311-jk2jrk1930r1hjj5dummn901t9c0vuvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT9k7yHE-wUWoh7nmzrIBGhN1Gy8U1THY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "108022863311-jk2jrk1930r1hjj5dummn901t9c0vuvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
