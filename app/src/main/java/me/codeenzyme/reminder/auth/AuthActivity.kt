@@ -32,6 +32,7 @@ import me.codeenzyme.reminder.auth.ui.theme.ReminderTheme
 
 class AuthActivity : ComponentActivity() {
 
+    // initializing an instance of auth view-model
     private val viewModel by viewModels<AuthViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,29 +44,33 @@ class AuthActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    //Greeting2("Android")
+                    // Passing sign up an sign in functions to composables where it is needed
                     AuthScreen(::signUp, ::login)
                 }
             }
         }
     }
 
+    // calling the view-model to handle sign up and handling auth status
     private fun signUp(firstName: String, lastName: String, email: String, password: String, phone: String) {
         viewModel.signUp(firstName, lastName, email, password, phone) {
+
+            // Using pattern-matching to detect auth status
             when (it) {
                 AuthStatus.LoginFailure -> {}
                 AuthStatus.LoginSuccess -> {}
                 AuthStatus.SignUpFailure -> {
-                    Toast.makeText(this, "Sign up failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Sign up failed", Toast.LENGTH_SHORT).show() // On Sign up failure, show a toast message
                 }
                 AuthStatus.SignUpSuccess -> {
-                    startActivity(Intent(this, MainActivity::class.java))
+                    startActivity(Intent(this, MainActivity::class.java)) // On sign up success, go to main activity
                     finish()
                 }
             }
         }
     }
 
+    // calling view-model to handle login with the required arguments
     private fun login(email: String, password: String) {
         viewModel.login(email, password) {
             when (it) {
@@ -85,7 +90,10 @@ class AuthActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun AuthScreen(signUp: (String, String, String, String, String) -> Unit, login: (email: String, password: String) -> Unit) {
-    val navController = rememberNavController()
+    val navController = rememberNavController() // getting an instance of navigation controller
+
+    // Instantiating a NavHost that manages navigation from one route to another
+    // Each route is represented as a composable
     NavHost(navController, startDestination = AuthScreen.Login.route) {
         composable(route = AuthScreen.Login.route) {
             LoginScreen(login) {
@@ -104,20 +112,24 @@ fun AuthScreen(signUp: (String, String, String, String, String) -> Unit, login: 
 @Composable
 fun LoginScreen(login: (email: String, password: String) -> Unit, goToSignUp: () -> Unit = {}) {
 
-    val focusManager = LocalFocusManager.current
+    val focusManager = LocalFocusManager.current // focus manager to manage focus on form fields
 
+    // Email field state
     var email by remember {
         mutableStateOf("")
     }
 
+    // Password field state
     var password by remember {
         mutableStateOf("")
     }
 
+    // state to track sign in
     var signInEnabled by remember {
         mutableStateOf(true)
     }
 
+    // building, the "don't have account?" text
     val annotatedString = buildAnnotatedString {
         withStyle(style = SpanStyle(color = Color.Gray)) {
             append("Don't have an account? ")
@@ -146,6 +158,7 @@ fun LoginScreen(login: (email: String, password: String) -> Unit, goToSignUp: ()
             ClickableText(text = annotatedString, onClick = {goToSignUp()})
         }
 
+        // show the progress indicator with respect to the "signInEnabled" state
         if (!signInEnabled) {
             CircularProgressIndicator(modifier = Modifier
                 .size(100.dp)
