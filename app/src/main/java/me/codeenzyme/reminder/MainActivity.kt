@@ -7,16 +7,22 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import me.codeenzyme.reminder.auth.AuthActivity
+import me.codeenzyme.reminder.home.HomeScreen
+import me.codeenzyme.reminder.profile.ProfileScreen
 import me.codeenzyme.reminder.ui.theme.ReminderTheme
 
 class MainActivity : ComponentActivity() {
@@ -53,14 +59,59 @@ class MainActivity : ComponentActivity() {
         setContent {
             ReminderTheme {
                 // A surface container using the 'background' color from the theme
+                val navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(), // modifier for filling the full screen
                     color = MaterialTheme.colors.background // setting surface colors from app theme
                 ) {
-                    Greeting(getString(R.string.app_name))
+                    //Greeting(getString(R.string.app_name))
+                    Scaffold(bottomBar = {
+                        BottomNav(navController)
+                    }) {
+                        AppScreens(navController)
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun AppScreens(navController: NavController) {
+
+    NavHost(navController = navController as NavHostController, startDestination = AppBottomNavigation.Home.route) {
+        composable(route = AppBottomNavigation.Home.route) {
+            HomeScreen()
+        }
+        composable(route = AppBottomNavigation.Profile.route) {
+            ProfileScreen()
+        }
+    }
+}
+
+@Composable
+fun BottomNav(navController: NavController) {
+    val bottomNavItems = listOf(
+        AppBottomNavigation.Home,
+        AppBottomNavigation.Profile
+    )
+    BottomNavigation {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+
+        bottomNavItems.forEach {
+            BottomNavigationItem(
+                selected = currentRoute == it.route,
+                onClick = { navController.navigate(it.route) },
+                icon = {
+                    Icon(imageVector = it.icon, contentDescription = it.label)
+                },
+                label = {
+                    Text(it.label)
+                }, alwaysShowLabel = false
+            )
+        }
+
     }
 }
 
