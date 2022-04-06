@@ -23,6 +23,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 @Composable
@@ -131,17 +133,17 @@ fun HomeScreen() {
     }) {
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            LazyColumn() {
-                medicationViewModel.getMedications {
-                    items(it) { medication ->
-                        Log.d("FIRE_REMIND", it.size.toString())
-                        Text(medication.medicationName!!)
-                    }
-                }
+            val data by remember {
+                medicationViewModel.getMedications()
+            }
+            LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+               data?.let {
+                   items(it) { medication ->
+                       MedicationItem(medication)
+                   }
+               }
             }
 
 
@@ -286,6 +288,22 @@ fun HomeScreen() {
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun MedicationItem(medicationModel: MedicationModel) {
+    val dateTimeFormat = SimpleDateFormat.getDateTimeInstance()
+    Card(modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth().padding(8.dp), backgroundColor = Color.LightGray) {
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Text(medicationModel.medicationName!!)
+            Text(medicationModel.medicationDescription!!)
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(medicationModel.medicationInterval.toString())
+                Text("${medicationModel.medicationDosage} ${medicationModel.medicationDosageType}")
+            }
+            Text(dateTimeFormat.format(Date()))
         }
     }
 }

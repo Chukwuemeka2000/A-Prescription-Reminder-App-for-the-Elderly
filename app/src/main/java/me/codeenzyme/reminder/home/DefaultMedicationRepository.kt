@@ -40,6 +40,7 @@ class DefaultMedicationRepository : MedicationRepository {
     override fun getMedications(callback: (List<MedicationModel>) -> Unit) {
         Firebase.auth.uid?.let {
             Firebase.firestore.collection("medications_${it}").addSnapshotListener { value, _ ->
+                Log.d("REPO_FIREBASE", "DATA")
                 value?.let {
                     val docs = it.toObjects(MedicationModel::class.java)
                     callback(docs)
