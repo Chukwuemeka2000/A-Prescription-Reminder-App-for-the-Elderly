@@ -20,4 +20,7 @@ class MedicationViewModel(private val medicationRepository: MedicationRepository
         return data
     }
 
+    fun deleteMedication(medicationModel: MedicationModel, onCompleteCallback: ((MedicationRepoStatus) -> Unit)? = null) {
+        medicationRepository.removeMedication(medicationModel, onCompleteCallback)
+    }
 }

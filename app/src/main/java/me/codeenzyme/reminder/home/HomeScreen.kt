@@ -1,10 +1,11 @@
 package me.codeenzyme.reminder.home
 
-import android.util.Log
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.widget.DatePicker
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,9 +22,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,7 +37,17 @@ fun HomeScreen() {
 
     val medicationViewModel: MedicationViewModel = viewModel(factory = MedicationViewModelFactory(DefaultMedicationRepository()))
 
+    fun deleteMedication(medicationModel: MedicationModel) {
+        medicationViewModel.deleteMedication(medicationModel, null)
+    }
+
     val context = LocalContext.current
+
+    val date = Date()
+    val timeDialog = TimePickerDialog(context,
+        { p0, p1, p2 ->
+            Toast.makeText(context, "$p1 : $p2", Toast.LENGTH_SHORT).show()
+        }, 0, 0, false)
 
     var showAddDialog by remember {
         mutableStateOf(false)
@@ -138,12 +153,18 @@ fun HomeScreen() {
             val data by remember {
                 medicationViewModel.getMedications()
             }
-            LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-               data?.let {
-                   items(it) { medication ->
-                       MedicationItem(medication)
-                   }
-               }
+            data?.let {
+                if (it.isEmpty()) {
+                    Text("No medication available", modifier = Modifier.fillMaxSize(), textAlign = TextAlign.Center)
+                } else {
+                    LazyColumn(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)) {
+                        items(it) { medication ->
+                            MedicationItem(medication, ::deleteMedication)
+                        }
+                    }
+                }
             }
 
 
@@ -229,11 +250,14 @@ fun HomeScreen() {
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            Row {
-                                Checkbox(checked = startMedicationNow, onCheckedChange = { startMedicationNow = it })
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(modifier = Modifier.clickable { startMedicationNow = !startMedicationNow }, text = "Start now")
+                            ReadonlyTextField(
+                                value = TextFieldValue("Select time"),
+                                onValueChange = {},
+                                onClick = { timeDialog.show() }) {
+
                             }
+
+                            Spacer(modifier = Modifier.height(16.dp))
 
                             Spacer(modifier = Modifier.height(16.dp))
 
@@ -245,13 +269,15 @@ fun HomeScreen() {
                                 TextButton(modifier = Modifier.padding(8.dp), onClick = {
                                     if (validate()) {
                                         var medication = MedicationModel(
+                                            UUID.randomUUID().toString(),
                                             medicationName,
                                             medicationDescription,
                                             medicationDosage,
                                             dosageTypes[selectedDosageIndex],
                                             medicationInterval,
-                                            startMedicationNow,
-                                            null
+                                            Timestamp(Date()),
+                                            Timestamp.now(),
+                                            Timestamp.now()
                                         )
 
                                         medicationViewModel.addMedication(medication) {
@@ -293,17 +319,27 @@ fun HomeScreen() {
 }
 
 @Composable
-fun MedicationItem(medicationModel: MedicationModel) {
+fun MedicationItem(medicationModel: MedicationModel, delete: (medicationModel: MedicationModel) -> Unit) {
     val dateTimeFormat = SimpleDateFormat.getDateTimeInstance()
-    Card(modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth().padding(8.dp), backgroundColor = Color.LightGray) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-            Text(medicationModel.medicationName!!)
-            Text(medicationModel.medicationDescription!!)
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(medicationModel.medicationInterval.toString())
-                Text("${medicationModel.medicationDosage} ${medicationModel.medicationDosageType}")
+    Card(modifier = Modifier
+        .padding(vertical = 8.dp)
+        .fillMaxWidth()
+        .padding(8.dp), backgroundColor = Color.LightGray) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            IconButton(onClick = { delete(medicationModel) }, modifier = Modifier.align(Alignment.TopEnd)) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "")
             }
-            Text(dateTimeFormat.format(Date()))
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
+                Text(medicationModel.medicationName!!)
+                Text(medicationModel.medicationDescription!!)
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(medicationModel.medicationInterval.toString())
+                    Text("${medicationModel.medicationDosage} ${medicationModel.medicationDosageType}")
+                }
+                Text(dateTimeFormat.format(Date()))
+            }
         }
     }
 }

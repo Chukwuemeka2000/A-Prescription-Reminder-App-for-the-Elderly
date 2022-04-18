@@ -12,7 +12,7 @@ class DefaultMedicationRepository : MedicationRepository {
         onCompleteCallback: (MedicationRepoStatus) -> Unit
     ) {
         Firebase.auth.uid?.let {
-            Firebase.firestore.collection("medications_${it}").add(medicationModel)
+            Firebase.firestore.collection("medications_${it}").document(medicationModel.id!!).set(medicationModel)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         onCompleteCallback(MedicationRepoStatus.Success)
@@ -25,9 +25,21 @@ class DefaultMedicationRepository : MedicationRepository {
 
     override fun removeMedication(
         medicationModel: MedicationModel,
-        onCompleteCallback: (MedicationRepoStatus) -> Unit
+        onCompleteCallback: ((MedicationRepoStatus) -> Unit)?
     ) {
-        TODO("Not yet implemented")
+        Firebase.auth.uid?.let {
+            Firebase.firestore.collection("medications_${it}").document(medicationModel.id!!).delete().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    if (onCompleteCallback != null) {
+                        onCompleteCallback(MedicationRepoStatus.Success)
+                    }
+                } else {
+                    if (onCompleteCallback != null) {
+                        onCompleteCallback(MedicationRepoStatus.Failure)
+                    }
+                }
+            }
+        }
     }
 
     override fun updateMedication(
