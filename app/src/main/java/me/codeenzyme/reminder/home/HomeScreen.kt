@@ -35,17 +35,23 @@ import java.util.*
 @Composable
 fun HomeScreen() {
 
-    val medicationViewModel: MedicationViewModel = viewModel(factory = MedicationViewModelFactory(DefaultMedicationRepository()))
+    val context = LocalContext.current
+    val medicationViewModel: MedicationViewModel = viewModel(factory = MedicationViewModelFactory(DefaultMedicationRepository(), context))
 
     fun deleteMedication(medicationModel: MedicationModel) {
         medicationViewModel.deleteMedication(medicationModel, null)
     }
 
-    val context = LocalContext.current
-
     val date = Date()
+    var time = 0L
     val timeDialog = TimePickerDialog(context,
         { p0, p1, p2 ->
+            val calendar = Calendar.getInstance().let {
+                it.set(Calendar.HOUR_OF_DAY, p1)
+                it.set(Calendar.MINUTE, p2)
+                it
+            }
+            time = calendar.timeInMillis
             Toast.makeText(context, "$p1 : $p2", Toast.LENGTH_SHORT).show()
         }, 0, 0, false)
 
@@ -157,6 +163,11 @@ fun HomeScreen() {
                 if (it.isEmpty()) {
                     Text("No medication available", modifier = Modifier.fillMaxSize(), textAlign = TextAlign.Center)
                 } else {
+                    it.forEachIndexed { index, model ->
+
+                        medicationViewModel.setAlarm(model.medicationName!!, model.medicationDescription!!, index, model.startTime!!.toDate().time, model.medicationInterval!!.toLong() * 60 * 60 * 1000)
+
+                    }
                     LazyColumn(modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)) {
@@ -268,14 +279,14 @@ fun HomeScreen() {
 
                                 TextButton(modifier = Modifier.padding(8.dp), onClick = {
                                     if (validate()) {
-                                        var medication = MedicationModel(
+                                        val medication = MedicationModel(
                                             UUID.randomUUID().toString(),
                                             medicationName,
                                             medicationDescription,
                                             medicationDosage,
                                             dosageTypes[selectedDosageIndex],
                                             medicationInterval,
-                                            Timestamp(Date()),
+                                            Timestamp(Date(time)),
                                             Timestamp.now(),
                                             Timestamp.now()
                                         )
