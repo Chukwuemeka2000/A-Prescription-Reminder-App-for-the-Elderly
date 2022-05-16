@@ -24,13 +24,19 @@ class MedicationViewModel(private val medicationRepository: MedicationRepository
     }
 
     fun setAlarm(title: String, message: String, reqId: Int, time: Long, interval: Long) {
+
+        // test for below android 10 whether activity will open from background
+        // use notification for >= android 10
+
+        val currentTime = System.currentTimeMillis()
+        if (currentTime > time) return
         val pendingIntent = Intent(context, AlarmReceiver::class.java).let {
             it.putExtra(ALARM_TITLE, title)
             it.putExtra(ALARM_MESSAGE, message)
             it.action = ALARM_ACTION
             PendingIntent.getBroadcast(context, reqId, it, 0)
         }
-        alarmManager?.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+        alarmManager?.setRepeating(AlarmManager.RTC_WAKEUP, time, interval, pendingIntent)
     }
 
     fun addMedication(medicationModel: MedicationModel, onCompleteCallback: (MedicationRepoStatus) -> Unit) {

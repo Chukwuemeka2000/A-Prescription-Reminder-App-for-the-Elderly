@@ -11,8 +11,7 @@ class AlarmReceiver: BroadcastReceiver() {
             if (newIntent.action != ALARM_ACTION) {
                 return
             }
-
-            startActivity(context!!, Intent(context, AlarmActivity::class.java), null)
+            context?.startActivity(Intent(context, AlarmActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
         }
     }
 }

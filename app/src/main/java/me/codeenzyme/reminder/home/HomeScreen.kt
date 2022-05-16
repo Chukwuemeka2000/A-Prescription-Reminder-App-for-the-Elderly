@@ -42,6 +42,10 @@ fun HomeScreen() {
         medicationViewModel.deleteMedication(medicationModel, null)
     }
 
+    var medicationStartTime by remember {
+        mutableStateOf("Select time")
+    }
+
     val date = Date()
     var time = 0L
     val timeDialog = TimePickerDialog(context,
@@ -53,7 +57,8 @@ fun HomeScreen() {
             }
             time = calendar.timeInMillis
             Toast.makeText(context, "$p1 : $p2", Toast.LENGTH_SHORT).show()
-        }, 0, 0, false)
+            medicationStartTime = "$p1 : $p2"
+        }, 0, 0, true)
 
     var showAddDialog by remember {
         mutableStateOf(false)
@@ -262,7 +267,7 @@ fun HomeScreen() {
                             Spacer(modifier = Modifier.height(16.dp))
 
                             ReadonlyTextField(
-                                value = TextFieldValue("Select time"),
+                                value = TextFieldValue(medicationStartTime),
                                 onValueChange = {},
                                 onClick = { timeDialog.show() }) {
 
