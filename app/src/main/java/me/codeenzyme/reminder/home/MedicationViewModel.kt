@@ -34,7 +34,7 @@ class MedicationViewModel(private val medicationRepository: MedicationRepository
             it.putExtra(ALARM_TITLE, title)
             it.putExtra(ALARM_MESSAGE, message)
             it.action = ALARM_ACTION
-            PendingIntent.getBroadcast(context, reqId, it, 0)
+            PendingIntent.getBroadcast(context, reqId, it, PendingIntent.FLAG_IMMUTABLE)
         }
         alarmManager?.setRepeating(AlarmManager.RTC_WAKEUP, time, interval, pendingIntent)
     }
