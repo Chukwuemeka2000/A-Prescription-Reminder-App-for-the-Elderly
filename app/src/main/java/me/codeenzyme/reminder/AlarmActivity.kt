@@ -8,7 +8,7 @@ import me.codeenzyme.reminder.databinding.ActivityAlarmBinding
 
 class AlarmActivity : AppCompatActivity() {
 
-    val zenTone = ZenTone(channelMask = AudioFormat.CHANNEL_OUT_STEREO)
+    private val zenTone = ZenTone(channelMask = AudioFormat.CHANNEL_OUT_STEREO)
 
     private var title: String? = null
     private var message: String? = null
