@@ -29,6 +29,14 @@ class AlarmActivity : AppCompatActivity() {
         viewBinding?.let {
             it.title.text = title
             it.message.text = message
+
+            it.skip.setOnClickListener {
+                finish()
+            }
+
+            it.complete.setOnClickListener {
+                finish()
+            }
         }
     }
 
