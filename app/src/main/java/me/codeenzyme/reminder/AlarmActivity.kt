@@ -1,14 +1,19 @@
 package me.codeenzyme.reminder
 
-import android.media.AudioFormat
-import androidx.appcompat.app.AppCompatActivity
+import android.media.MediaPlayer
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Bundle
-import com.github.nisrulz.zentone.ZenTone
+import androidx.appcompat.app.AppCompatActivity
+import com.daimajia.androidanimations.library.Techniques
+import com.daimajia.androidanimations.library.YoYo
 import me.codeenzyme.reminder.databinding.ActivityAlarmBinding
+
 
 class AlarmActivity : AppCompatActivity() {
 
-    private val zenTone = ZenTone(channelMask = AudioFormat.CHANNEL_OUT_STEREO)
+    //private val zenTone = ZenTone(channelMask = AudioFormat.CHANNEL_OUT_STEREO)
+    private lateinit var player: MediaPlayer
 
     private var title: String? = null
     private var message: String? = null
@@ -18,7 +23,12 @@ class AlarmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        zenTone.play(440F, 100)
+        //zenTone.play(440F, 100)
+
+        val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        player = MediaPlayer.create(this, notification)
+        player.isLooping = true
+        player.start()
 
         viewBinding = ActivityAlarmBinding.inflate(layoutInflater)
         setContentView(viewBinding?.root)
@@ -29,6 +39,11 @@ class AlarmActivity : AppCompatActivity() {
         viewBinding?.let {
             it.title.text = title
             it.message.text = message
+
+            YoYo.with(Techniques.Shake)
+                .duration(1000)
+                .repeat(Int.MAX_VALUE)
+                .playOn(it.alarm)
 
             it.skip.setOnClickListener {
                 finish()
@@ -43,7 +58,9 @@ class AlarmActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         viewBinding = null
-        zenTone.stop()
-        zenTone.release()
+        player.stop()
+        player.release()
+        //zenTone.stop()
+        //zenTone.release()
     }
 }

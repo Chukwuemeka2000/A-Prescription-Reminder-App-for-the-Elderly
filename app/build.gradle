@@ -53,6 +53,9 @@ dependencies {
     // ZenTone
     implementation "com.github.nisrulz:zentone:2.1.0"
 
+    // anims
+    implementation 'com.daimajia.androidanimations:library:2.4@aar'
+
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
 
     implementation platform('com.google.firebase:firebase-bom:29.1.0')
