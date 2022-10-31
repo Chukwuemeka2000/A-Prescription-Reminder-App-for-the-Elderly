@@ -1,7 +1,9 @@
 package me.codeenzyme.reminder.home
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.util.Log
 import android.widget.DatePicker
 import android.widget.TimePicker
 import android.widget.Toast
@@ -32,6 +34,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen() {
 
@@ -58,7 +61,7 @@ fun HomeScreen() {
             time = calendar.timeInMillis
             Toast.makeText(context, "$p1 : $p2", Toast.LENGTH_SHORT).show()
             medicationStartTime = "$p1 : $p2"
-        }, 0, 0, true)
+        }, 0, 0, false)
 
     var showAddDialog by remember {
         mutableStateOf(false)
@@ -170,8 +173,8 @@ fun HomeScreen() {
                 } else {
                     it.forEachIndexed { index, model ->
 
-                        medicationViewModel.setAlarm(model.medicationName!!, model.medicationDescription!!, index, model.startTime!!.toDate().time, model.medicationInterval!!.toLong() * 60 * 60 * 1000)
-
+                        medicationViewModel.setAlarm(model.medicationName!!, model.medicationDescription!!, index, (model.startTime!!.toDate().time), model.medicationInterval!!.toLong())
+                        Log.e("time stamp", model.startTime!!.toDate().toString())
                     }
                     LazyColumn(modifier = Modifier
                         .fillMaxSize()
