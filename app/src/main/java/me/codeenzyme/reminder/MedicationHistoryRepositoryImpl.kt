@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import me.codeenzyme.reminder.auth.UserDataModel
 import me.codeenzyme.reminder.home.MedicationModel
 
 class MedicationHistoryRepositoryImpl: MedicationHistoryRepository {
@@ -31,6 +32,24 @@ class MedicationHistoryRepositoryImpl: MedicationHistoryRepository {
                     val docs = it.toObjects(MedicationHistory::class.java)
                     callback(docs)
                 }
+            }
+        }
+    }
+
+    override fun getUsername(callback: (name: String) -> Unit) {
+        Firebase.auth.uid?.let {
+            Firebase.firestore.collection("users").document(it).addSnapshotListener { value, _ ->
+                val data = value?.toObject(UserDataModel::class.java)
+                callback("${data?.firstName} ${data?.lastName}")
+            }
+        }
+    }
+
+    override fun getPhone(callback: (phone: String) -> Unit) {
+        Firebase.auth.uid?.let {
+            Firebase.firestore.collection("users").document(it).addSnapshotListener { value, _ ->
+                val data = value?.toObject(UserDataModel::class.java)
+                callback("${data?.phone}")
             }
         }
     }

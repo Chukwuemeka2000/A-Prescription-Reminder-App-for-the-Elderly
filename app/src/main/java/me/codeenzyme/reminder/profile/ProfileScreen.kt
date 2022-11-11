@@ -49,9 +49,9 @@ fun ProfileScreen() {
             contentDescription = "User profile picture"
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Victor Elezua", fontWeight = FontWeight.Bold, fontSize = 22.sp)
+        medicationHistoryViewModel.name.value?.let { Text(text = it, fontWeight = FontWeight.Bold, fontSize = 22.sp) }
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = "09076282648")
+        medicationHistoryViewModel.phone.value?.let { Text(text = it) }
 
         Spacer(modifier = Modifier.height(32.dp))
         Text(

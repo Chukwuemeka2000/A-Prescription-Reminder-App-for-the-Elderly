@@ -14,6 +14,9 @@ class AlarmViewModel(
 
     private val data = mutableStateOf<List<MedicationHistory>?>(null)
 
+    val name = mutableStateOf<String?>(null)
+    val phone = mutableStateOf<String?>(null)
+
     fun addMedicationHistory(medicationHistory: MedicationHistory, callback: (MedicationRepoStatus) -> Unit) {
         viewModelScope.launch {
             medicationHistoryRepository.addMedicationHistory(medicationHistory) {
@@ -24,6 +27,12 @@ class AlarmViewModel(
 
     fun getMedicationHistory(scope: CoroutineScope): MutableState<List<MedicationHistory>?> {
         scope.launch {
+            medicationHistoryRepository.getUsername {
+                name.value = it
+            }
+            medicationHistoryRepository.getPhone {
+                phone.value = it
+            }
             medicationHistoryRepository.getMedicationHistory {
                 data.value = it
             }

@@ -20,4 +20,6 @@ data class UserDataModel(
     @get:PropertyName("phone")
     @set:PropertyName("phone")
     var phone: String,
-): Parcelable // Parcelables are a preferred way for passing serializable objects in Android
+): Parcelable {
+    constructor(): this("", "", "")
+} // Parcelables are a preferred way for passing serializable objects in Android
