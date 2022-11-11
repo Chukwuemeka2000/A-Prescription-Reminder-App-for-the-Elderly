@@ -9,9 +9,12 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
+import com.google.firebase.Timestamp
 import me.codeenzyme.reminder.databinding.ActivityAlarmBinding
+import java.util.*
 
 
 class AlarmActivity : AppCompatActivity() {
@@ -22,11 +25,16 @@ class AlarmActivity : AppCompatActivity() {
 
     private var title: String? = null
     private var message: String? = null
+    private var interval: Long? = null
+    private var dosage: Int? = null
+    private var dosageType: String? = null
 
     private var viewBinding: ActivityAlarmBinding? = null
 
     private var mediaBrowser : MediaBrowserCompat? = null
     private var mediaController : MediaControllerCompat? = null
+
+    private lateinit var viewModel: AlarmViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,11 +45,16 @@ class AlarmActivity : AppCompatActivity() {
 
         //zenTone.play(440F, 100)
 
+        viewModel = ViewModelProvider(this, MedicationHistoryViewModelFactory(MedicationHistoryRepositoryImpl()))[AlarmViewModel::class.java]
+
         viewBinding = ActivityAlarmBinding.inflate(layoutInflater)
         setContentView(viewBinding?.root)
 
         title = intent.getStringExtra(ALARM_TITLE)
         message = intent.getStringExtra(ALARM_MESSAGE)
+        interval = intent.getLongExtra(ALARM_INTERVAL, 0)
+        dosage = intent.getIntExtra(ALARM_DOSAGE, 0)
+        dosageType = intent.getStringExtra(ALARM_DOSAGE_TYPE)
 
         viewBinding?.let {
             it.title.text = title
@@ -53,11 +66,39 @@ class AlarmActivity : AppCompatActivity() {
                 .playOn(it.alarm)
 
             it.skip.setOnClickListener {
+                viewModel.addMedicationHistory(
+                    MedicationHistory(
+                        false,
+                        title,
+                        message,
+                        interval?.toInt(),
+                        dosage,
+                        dosageType,
+                        UUID.randomUUID().toString(),
+                        Timestamp.now()
+                    )
+                ) {
+
+                }
                 stopAlarm()
                 finish()
             }
 
             it.complete.setOnClickListener {
+                viewModel.addMedicationHistory(
+                    MedicationHistory(
+                        true,
+                        title,
+                        message,
+                        interval?.toInt(),
+                        dosage,
+                        dosageType,
+                        UUID.randomUUID().toString(),
+                        Timestamp.now()
+                    )
+                ) {
+
+                }
                 stopAlarm()
                 finish()
             }

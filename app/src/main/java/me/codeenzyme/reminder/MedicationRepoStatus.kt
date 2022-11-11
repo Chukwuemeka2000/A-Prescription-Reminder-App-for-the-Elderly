@@ -1,4 +1,4 @@
-package me.codeenzyme.reminder.home
+package me.codeenzyme.reminder
 
 sealed class MedicationRepoStatus {
     object Success: MedicationRepoStatus()
