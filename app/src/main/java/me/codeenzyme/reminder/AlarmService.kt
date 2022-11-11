@@ -176,12 +176,17 @@ class AlarmService : MediaBrowserServiceCompat() {
             val title = newIntent.getStringExtra(ALARM_TITLE)
             val message = newIntent.getStringExtra(ALARM_MESSAGE)
             val interval = newIntent.getLongExtra(ALARM_INTERVAL, 0)
+            val dosage = newIntent.getIntExtra(ALARM_DOSAGE, 0)
+            val dosageType = newIntent.getStringExtra(ALARM_DOSAGE_TYPE)
             val currentRingTime = newIntent.getLongExtra(ALARM_CURRENT_RING_TIME, 0)
 
             val fullScreenIntent = Intent(baseContext, AlarmActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 putExtra(ALARM_TITLE, title)
                 putExtra(ALARM_MESSAGE, message)
+                putExtra(ALARM_INTERVAL, interval)
+                putExtra(ALARM_DOSAGE, dosage)
+                putExtra(ALARM_DOSAGE_TYPE, dosageType)
             }
             val fullScreenPendingIntent = PendingIntent.getActivity(baseContext, 0,
                 fullScreenIntent, PendingIntent.FLAG_IMMUTABLE)
