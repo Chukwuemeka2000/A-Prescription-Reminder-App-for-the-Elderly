@@ -41,10 +41,14 @@ data class MedicationModel(
     @set:PropertyName("next_time")
     var nextTime: Timestamp?,
 
+    @get:PropertyName("alarm_id")
+    @set:PropertyName("alarm_id")
+    var alarmId: Int?,
+
     @get:PropertyName("created_at")
     @set:PropertyName("created_at")
     @ServerTimestamp
     var createdAt: Timestamp?
 ): Parcelable {
-    constructor() : this(null,null, null, null, null, null, null, null, null)
+    constructor() : this(null,null, null, null, null, null, null, null, null, null)
 }
