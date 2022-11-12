@@ -61,30 +61,33 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/skip"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:minWidth="170dp"
+            android:minWidth="100dp"
             android:text="Skip"
-            android:textSize="24sp"
+            android:textSize="22sp"
             android:paddingVertical="16dp"
-            android:paddingHorizontal="32dp"
+            android:paddingHorizontal="24dp"
             android:textColor="@color/white"
             android:backgroundTint="#F44336"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@id/complete"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/complete"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:minWidth="170dp"
+            android:minWidth="100dp"
             android:text="Complete"
-            android:textSize="24sp"
-            android:layout_gravity="end"
+            android:textSize="22sp"
             android:paddingVertical="16dp"
-            android:paddingHorizontal="32dp"
+            android:paddingHorizontal="24dp"
             android:textColor="@color/white"
             android:backgroundTint="#4CAF50"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@id/skip"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 

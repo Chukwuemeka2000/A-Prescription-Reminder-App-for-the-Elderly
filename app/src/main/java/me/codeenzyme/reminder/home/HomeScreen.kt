@@ -1,11 +1,8 @@
 package me.codeenzyme.reminder.home
 
 import android.annotation.SuppressLint
-import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.util.Log
-import android.widget.DatePicker
-import android.widget.TimePicker
 import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -30,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.Timestamp
+import me.codeenzyme.reminder.MedicationRepoStatus
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -173,7 +171,7 @@ fun HomeScreen() {
                 } else {
                     it.forEachIndexed { index, model ->
 
-                        medicationViewModel.setAlarm(model.medicationName!!, model.medicationDescription!!, index, (model.startTime!!.toDate().time), model.medicationInterval!!.toLong())
+                        medicationViewModel.setAlarm(model.medicationName!!, model.medicationDescription!!, model.medicationDosage!!, model.medicationDosageType!!, index, (model.startTime!!.toDate().time), model.medicationInterval!!.toLong())
                         Log.e("time stamp", model.startTime!!.toDate().toString())
                     }
                     LazyColumn(modifier = Modifier
