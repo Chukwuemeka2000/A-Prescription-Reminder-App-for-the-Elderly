@@ -2,6 +2,7 @@ package me.codeenzyme.reminder.home
 
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.*
@@ -28,7 +29,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.Timestamp
 import me.codeenzyme.reminder.MedicationRepoStatus
+import java.lang.StrictMath.abs
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 
@@ -171,7 +175,7 @@ fun HomeScreen() {
                 } else {
                     it.forEachIndexed { index, model ->
 
-                        medicationViewModel.setAlarm(model.medicationName!!, model.medicationDescription!!, model.medicationDosage!!, model.medicationDosageType!!, index, (model.startTime!!.toDate().time), model.medicationInterval!!.toLong())
+                        medicationViewModel.setAlarm(model.medicationName!!, model.medicationDescription!!, model.medicationDosage!!, model.medicationDosageType!!, model.alarmId!!, (model.startTime!!.toDate().time), model.medicationInterval!!.toLong())
                         Log.e("time stamp", model.startTime!!.toDate().toString())
                     }
                     LazyColumn(modifier = Modifier
@@ -294,6 +298,7 @@ fun HomeScreen() {
                                             medicationInterval,
                                             Timestamp(Date(time)),
                                             Timestamp.now(),
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) abs(Random(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)).nextInt()) else (0..30000).random(),
                                             Timestamp.now()
                                         )
 

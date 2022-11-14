@@ -5,6 +5,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +24,7 @@ class MedicationViewModel(private val medicationRepository: MedicationRepository
 
     @SuppressLint("InlinedApi")
     fun setAlarm(title: String, message: String, dosage: Int, dosageType: String, reqId: Int, time: Long, interval: Long) {
+        Log.e("id",reqId.toString())
 
         // test for below android 10 whether activity will open from background
         // use notification for >= android 10
@@ -38,6 +40,7 @@ class MedicationViewModel(private val medicationRepository: MedicationRepository
             it.putExtra(ALARM_DOSAGE, dosage)
             it.putExtra(ALARM_DOSAGE_TYPE, dosageType)
             it.putExtra(ALARM_CURRENT_RING_TIME, time)
+            it.putExtra(ALARM_ID, reqId)
             it.action = ALARM_ACTION
             it.addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
             PendingIntent.getBroadcast(context, reqId, it, PendingIntent.FLAG_IMMUTABLE)
