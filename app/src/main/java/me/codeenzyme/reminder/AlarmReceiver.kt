@@ -24,6 +24,7 @@ class AlarmReceiver : BroadcastReceiver() {
             putExtra(ALARM_MESSAGE, intent?.getStringExtra(ALARM_MESSAGE) ?: "")
             putExtra(ALARM_INTERVAL, intent?.getLongExtra(ALARM_INTERVAL, 0) ?: 0)
             putExtra(ALARM_CURRENT_RING_TIME, intent?.getLongExtra(ALARM_CURRENT_RING_TIME, 0) ?: 0)
+            putExtra(ALARM_ID, intent?.getIntExtra(ALARM_ID, 0))
             action = AlarmService.REMINDER_ALARM_SERVICE
         }
         context?.startForegroundService(serviceIntent)

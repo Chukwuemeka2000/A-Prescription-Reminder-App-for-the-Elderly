@@ -2,6 +2,7 @@ package me.codeenzyme.reminder.home
 
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.*
@@ -19,16 +20,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.Timestamp
 import me.codeenzyme.reminder.MedicationRepoStatus
+import me.codeenzyme.reminder.R
+import me.codeenzyme.reminder.Util
+import java.lang.StrictMath.abs
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 
@@ -154,24 +162,35 @@ fun HomeScreen() {
     }
 
     Scaffold(modifier = Modifier.padding(bottom = 50.dp), floatingActionButton = {
-        FloatingActionButton(onClick = { showAddDialog = true }) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "Add new medication")
+        FloatingActionButton(onClick = { showAddDialog = true },) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = "Add new medication",)
         }
     }) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             val data by remember {
                 medicationViewModel.getMedications()
             }
+
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = "Number of Medicines", color = MaterialTheme.colors.primaryVariant, fontSize = 26.sp)
+                Text(text = "${data?.size ?: 0}", fontSize = 24.sp)
+            }
+
             data?.let {
                 if (it.isEmpty()) {
-                    Text("No medication available", modifier = Modifier.fillMaxSize(), textAlign = TextAlign.Center)
+                    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                        Text("No medication available.")
+                    }
                 } else {
                     it.forEachIndexed { index, model ->
 
-                        medicationViewModel.setAlarm(model.medicationName!!, model.medicationDescription!!, model.medicationDosage!!, model.medicationDosageType!!, index, (model.startTime!!.toDate().time), model.medicationInterval!!.toLong())
+                        medicationViewModel.setAlarm(model.medicationName!!, model.medicationDescription!!, model.medicationDosage!!, model.medicationDosageType!!, model.alarmId!!, (model.startTime!!.toDate().time), model.medicationInterval!!.toLong())
                         Log.e("time stamp", model.startTime!!.toDate().toString())
                     }
                     LazyColumn(modifier = Modifier
@@ -250,7 +269,11 @@ fun HomeScreen() {
                                         selectedDosageIndex = index
                                         dosageTypeExpanded = false
                                     }) {
-                                        Text(dosageType)
+                                        Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(modifier = Modifier.size(48.dp), painter = painterResource(id = Util.medicIconMap[dosageType] ?: R.drawable.ic_pill), contentDescription = dosageType)
+                                            Spacer(modifier = Modifier.size(16.dp))
+                                            Text(dosageType)
+                                        }
                                     }
                                 }
                             }
@@ -294,6 +317,7 @@ fun HomeScreen() {
                                             medicationInterval,
                                             Timestamp(Date(time)),
                                             Timestamp.now(),
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) abs(Random(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)).nextInt()) else (0..30000).random(),
                                             Timestamp.now()
                                         )
 

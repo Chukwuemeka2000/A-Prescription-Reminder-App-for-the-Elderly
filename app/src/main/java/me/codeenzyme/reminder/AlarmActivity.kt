@@ -56,6 +56,8 @@ class AlarmActivity : AppCompatActivity() {
         dosage = intent.getIntExtra(ALARM_DOSAGE, 0)
         dosageType = intent.getStringExtra(ALARM_DOSAGE_TYPE)
 
+        Log.e("activity values", "$title $message")
+
         viewBinding?.let {
             it.title.text = title
             it.message.text = message

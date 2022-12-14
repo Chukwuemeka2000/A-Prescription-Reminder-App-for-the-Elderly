@@ -1,8 +1,11 @@
 package me.codeenzyme.reminder
 
 import android.annotation.SuppressLint
+import android.app.ActionBar
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -54,6 +57,8 @@ val DEFAULT_RINGTONE_PREFERENCE_KEY = "DEFAULT_RINGTONE_PREFERENCE_KEY"
 class MainActivity : ComponentActivity() {
     private val SETTINGS_ACTION_ID = 0xf343ab
 
+    private var appBar: ActionBar? = null
+
     val ringtoneLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
             val dataIntent = it.data
@@ -77,6 +82,9 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        appBar = actionBar
+        appBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#FF3700B3")))
 
         lifecycleScope.launch(context = Dispatchers.IO) {
             dataPreferences.data.first()

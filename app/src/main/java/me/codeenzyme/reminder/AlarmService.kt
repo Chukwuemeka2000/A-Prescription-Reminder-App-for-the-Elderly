@@ -175,6 +175,7 @@ class AlarmService : MediaBrowserServiceCompat() {
 
             val title = newIntent.getStringExtra(ALARM_TITLE)
             val message = newIntent.getStringExtra(ALARM_MESSAGE)
+            val reqId = newIntent.getIntExtra(ALARM_ID, 0)
             val interval = newIntent.getLongExtra(ALARM_INTERVAL, 0)
             val dosage = newIntent.getIntExtra(ALARM_DOSAGE, 0)
             val dosageType = newIntent.getStringExtra(ALARM_DOSAGE_TYPE)
@@ -188,7 +189,8 @@ class AlarmService : MediaBrowserServiceCompat() {
                 putExtra(ALARM_DOSAGE, dosage)
                 putExtra(ALARM_DOSAGE_TYPE, dosageType)
             }
-            val fullScreenPendingIntent = PendingIntent.getActivity(baseContext, 0,
+            Log.e("values", "$title $message")
+            val fullScreenPendingIntent = PendingIntent.getActivity(baseContext, reqId,
                 fullScreenIntent, PendingIntent.FLAG_IMMUTABLE)
 
             builder.setSmallIcon(R.drawable.ic_round_alarm_on_24)
@@ -197,7 +199,7 @@ class AlarmService : MediaBrowserServiceCompat() {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setFullScreenIntent(fullScreenPendingIntent, true)
 
-            scheduleAlarm(context = baseContext, title = title!!, message = message!!, reqId = 1, ringTime = currentRingTime, interval = interval)
+            scheduleAlarm(context = baseContext, title = title!!, message = message!!, reqId = reqId, ringTime = currentRingTime, interval = interval)
         }
         if (vibrationService.hasVibrator())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
