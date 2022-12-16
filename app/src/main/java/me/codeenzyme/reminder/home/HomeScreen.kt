@@ -420,10 +420,10 @@ fun MedicationItem(medicationModel: MedicationModel, delete: (medicationModel: M
                 Text(medicationModel.medicationName!!, overflow = TextOverflow.Ellipsis, fontSize = 20.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                 Spacer(modifier = Modifier.size(16.dp))
                 Text(medicationModel.medicationDescription!!, overflow = TextOverflow.Ellipsis, maxLines = 2)
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(medicationModel.medicationInterval.toString())
-                    Text("${medicationModel.medicationDosage} ${medicationModel.medicationDosageType}")
-                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("${medicationModel.medicationDosage} ${medicationModel.medicationDosageType}")
+                Text("Every ${medicationModel.medicationInterval.toString()} hours")
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(dateTimeFormat.format(Date()))
             }
         }
